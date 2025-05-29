@@ -3,7 +3,7 @@ interface DB {
   artists: Record<string, Artist>;
   albums: Record<string, Album>;
   tracks: Record<string, Track>;
-  favorites: Record<string, Favorites>;
+  favorites: Favorites;
 }
 interface User {
   id: string; // uuid v4
@@ -13,11 +13,19 @@ interface User {
   createdAt: number; // timestamp of creation
   updatedAt: number; // timestamp of last update
 }
+interface CreateUserDto
+  extends Omit<User, 'id' | 'version' | 'createdAt' | 'updatedAt'> {}
+interface UpdateUserDto {
+  oldPassword: string; // previous password
+  newPassword: string; // new password
+}
 interface Artist {
   id: string; // uuid v4
   name: string;
   grammy: boolean;
 }
+interface CreateArtistDto extends Omit<Artist, 'id'> {}
+interface UpdateArtistDto extends CreateArtistDto {}
 interface Track {
   id: string; // uuid v4
   name: string;
@@ -36,14 +44,6 @@ interface Favorites {
   albums: string[]; // favorite albums ids
   tracks: string[]; // favorite tracks ids
 }
-interface CreateUserDto {
-  login: string;
-  password: string;
-}
-interface UpdatePasswordDto {
-  oldPassword: string; // previous password
-  newPassword: string; // new password
-}
 interface FavoritesResponse {
   artists: Artist[];
   albums: Album[];
@@ -52,11 +52,13 @@ interface FavoritesResponse {
 export {
   DB,
   User,
+  CreateUserDto,
+  UpdateUserDto,
   Artist,
+  CreateArtistDto,
+  UpdateArtistDto,
   Track,
   Album,
   Favorites,
-  CreateUserDto,
-  UpdatePasswordDto,
   FavoritesResponse,
 };
