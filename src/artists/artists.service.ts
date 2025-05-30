@@ -6,7 +6,7 @@ import { randomUUID } from 'crypto';
 import { db } from '../data-base/data-base';
 
 @Injectable()
-export class ArtistsService {
+class ArtistsService {
   private favorites: Favorites;
   private artists: Record<string, Artist>;
   private albums: Record<string, Album>;
@@ -45,11 +45,7 @@ export class ArtistsService {
   }
 
   update(id: string, updateArtistDto: UpdateArtistDto) {
-    const artist = this.artists[id];
-
-    if (!artist) {
-      throw new NotFoundException('Artist not found');
-    }
+    const artist = this.findOne(id);
 
     artist.name = updateArtistDto.name;
     artist.grammy = updateArtistDto.grammy;
@@ -58,21 +54,21 @@ export class ArtistsService {
   }
 
   remove(id: string) {
-    const artist = this.artists[id];
-
-    if (!artist) {
-      throw new NotFoundException('Artist not found');
-    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const artist = this.findOne(id);
 
     delete this.artists[id];
-    this.favorites.artists = this.favorites.artists.filter((artisId) => {
-      return artisId !== id;
+
+    this.favorites.artists = this.favorites.artists.filter((artistId) => {
+      return artistId !== id;
     });
+
     Object.values(this.albums).forEach((album) => {
       if (album.artistId === id) {
         album.artistId = null;
       }
     });
+
     Object.values(this.tracks).forEach((track) => {
       if (track.artistId === id) {
         track.artistId = null;
@@ -80,3 +76,5 @@ export class ArtistsService {
     });
   }
 }
+
+export { ArtistsService };

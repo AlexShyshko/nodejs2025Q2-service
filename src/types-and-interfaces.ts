@@ -39,6 +39,8 @@ interface Album {
   year: number;
   artistId: string | null; // refers to Artist
 }
+interface CreateAlbumDto extends Omit<Album, 'id'> {}
+interface UpdateAlbumDto extends Omit<Album, 'id'> {}
 interface Favorites {
   artists: string[]; // favorite artists ids
   albums: string[]; // favorite albums ids
@@ -59,6 +61,8 @@ export {
   UpdateArtistDto,
   Track,
   Album,
+  CreateAlbumDto,
+  UpdateAlbumDto,
   Favorites,
   FavoritesResponse,
 };

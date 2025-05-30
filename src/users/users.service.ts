@@ -64,12 +64,18 @@ class UsersService {
     return rest;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto): Omit<User, 'password'> {
+  #findOneWithPassword(id: string): User {
     const user = this.users[id];
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    return user;
+  }
+
+  update(id: string, updateUserDto: UpdateUserDto): Omit<User, 'password'> {
+    const user = this.#findOneWithPassword(id);
 
     if (user.password !== updateUserDto.oldPassword) {
       throw new ForbiddenException('Old password is incorrect');
@@ -86,11 +92,8 @@ class UsersService {
   }
 
   remove(id: string): void {
-    const user = this.users[id];
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const user = this.#findOneWithPassword(id);
 
     delete this.users[id];
   }

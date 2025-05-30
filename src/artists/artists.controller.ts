@@ -15,7 +15,7 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
 @Controller('artist')
-export class ArtistsController {
+class ArtistsController {
   private readonly artistsService: ArtistsService;
 
   constructor(artistsService: ArtistsService) {
@@ -51,3 +51,5 @@ export class ArtistsController {
     this.artistsService.remove(id);
   }
 }
+
+export { ArtistsController };
