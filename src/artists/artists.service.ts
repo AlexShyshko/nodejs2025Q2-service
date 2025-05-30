@@ -19,7 +19,7 @@ class ArtistsService {
     this.tracks = db.tracks;
   }
 
-  findAll(): Artist[] {
+  findAll() {
     return Object.values(this.artists);
   }
 

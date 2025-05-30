@@ -33,6 +33,8 @@ interface Track {
   albumId: string | null; // refers to Album
   duration: number; // integer number
 }
+interface CreateTrackDto extends Omit<Track, 'id'> {}
+interface UpdateTrackDto extends CreateTrackDto {}
 interface Album {
   id: string; // uuid v4
   name: string;
@@ -60,6 +62,8 @@ export {
   CreateArtistDto,
   UpdateArtistDto,
   Track,
+  CreateTrackDto,
+  UpdateTrackDto,
   Album,
   CreateAlbumDto,
   UpdateAlbumDto,

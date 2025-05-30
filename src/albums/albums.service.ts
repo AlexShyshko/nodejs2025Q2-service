@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Favorites, Artist, Album, Track } from '../types-and-interfaces';
+import { Favorites, Album, Track } from '../types-and-interfaces';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { randomUUID } from 'crypto';
@@ -8,18 +8,16 @@ import { db } from '../data-base/data-base';
 @Injectable()
 class AlbumsService {
   private favorites: Favorites;
-  private artists: Record<string, Artist>;
   private albums: Record<string, Album>;
   private tracks: Record<string, Track>;
 
   constructor() {
     this.favorites = db.favorites;
-    this.artists = db.artists;
     this.albums = db.albums;
     this.tracks = db.tracks;
   }
 
-  findAll(): Album[] {
+  findAll() {
     return Object.values(this.albums);
   }
 
