@@ -1,21 +1,17 @@
-# DEVELOPMENT
+# DEV
 FROM node:22-alpine AS dev
-WORKDIR /app
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm install
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm ci && npm cache clean --force
 COPY . .
-EXPOSE 4000
-# BUILD
-FROM dev AS build
-RUN npm run build
-# PRODUCTION
+RUN npm run prisma:generate
+# PROD
 FROM node:22-alpine AS prod
-WORKDIR /app
-COPY --from=build /app/package.json ./
-COPY --from=build /app/package-lock.json ./
-COPY --from=build /app/.env ./
-RUN npm ci --only=production
-COPY --from=build /app/dist ./dist
+WORKDIR /usr/src/app
+COPY --from=dev /usr/src/app/package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=dev /usr/src/app/tsconfig*.json ./
+COPY --from=dev /usr/src/app/src ./src
+COPY --from=dev /usr/src/app/prisma ./prisma/
 EXPOSE 4000
-CMD ["npm", "run", "start:prod"]
+CMD [ "npm", "run", "start:docker" ]

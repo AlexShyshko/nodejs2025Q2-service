@@ -2,26 +2,34 @@ services:
   db:
     env_file: .env
     environment:
-      - POSTGRES_DB=${DATABASE_NAME}
-      - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_PORT=${DATABASE_PORT}
-    image: alexshyshko_task-2-image_db
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DOCKER_COMPOSE_SERVICE_NAME=${POSTGRES_DOCKER_COMPOSE_SERVICE_NAME}
+    image: alexshyshko_task-2-image_${POSTGRES_DOCKER_COMPOSE_SERVICE_NAME}
     build:
       context: .
       dockerfile: db.Dockerfile
-    container_name: alexshyshko_task-2-container_db
+    container_name: alexshyshko_task-2-container_${POSTGRES_DOCKER_COMPOSE_SERVICE_NAME}
     ports:
-      - "${DATABASE_PORT}:${DATABASE_PORT}"
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     restart: unless-stopped
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - app-network
-    working_dir: /app
-    command: ["postgres", "-p", "${DATABASE_PORT}"]
+      - backend
+    command: ["postgres", "-p", "${POSTGRES_PORT}"]
   prod:
     env_file: .env
+    environment:
+      - PORT=${PORT}
+      - DB_TYPE=postgres
+      - DB_HOST=${POSTGRES_DOCKER_COMPOSE_SERVICE_NAME}
+      - DB_PORT=${POSTGRES_PORT}
+      - DB_USERNAME=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_DATABASE=${POSTGRES_DB}
     image: alexshyshko_task-2-image_prod
     build:
       context: .
@@ -32,16 +40,18 @@ services:
       - "${PORT}:${PORT}"
     restart: unless-stopped
     volumes:
-      - ./src:/app/src
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     networks:
-      - app-network
-    working_dir: /app
+      - backend
     depends_on:
-      - db
+      db:
+        condition: service_started
+    command: npm run start:docker
 
 volumes:
   pgdata:
 
 networks:
-  app-network:
+  backend:
     driver: bridge

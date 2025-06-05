@@ -9,7 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { randomUUID } from 'crypto';
 import { db } from '../data-base/data-base';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 class UsersService {
@@ -20,7 +20,9 @@ class UsersService {
   }
 
   findAll(): Omit<User, 'password'>[] {
+    //this.prisma.client.user.findMany();
     console.log('FIND ALL USERS');
+    console.log('ONE MORE - FIND ALL USERS');
     return Object.values(this.users).map((user) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...rest } = user;
