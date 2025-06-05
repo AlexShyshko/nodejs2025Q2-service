@@ -1,31 +1,47 @@
 services:
-  dev:
+  db:
     env_file: .env
-    image: alexshyshko_task-2-image_dev
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_PORT=${DATABASE_PORT}
+    image: alexshyshko_task-2-image_db
     build:
       context: .
-      dockerfile: Dockerfile
-      target: dev
-    container_name: alexshyshko_task-2-container_dev
+      dockerfile: db.Dockerfile
+    container_name: alexshyshko_task-2-container_db
     ports:
-      - "${PORT}:${PORT}"
+      - "${DATABASE_PORT}:${DATABASE_PORT}"
     restart: unless-stopped
     volumes:
-      - .:/app
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
     working_dir: /app
-    command: ["npm", "run", "start:dev"]
+    command: ["postgres", "-p", "${DATABASE_PORT}"]
   prod:
     env_file: .env
     image: alexshyshko_task-2-image_prod
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: prod.Dockerfile
       target: prod
     container_name: alexshyshko_task-2-container_prod
     ports:
       - "${PORT}:${PORT}"
     restart: unless-stopped
-    # volumes:
-    #   - .:/app
+    volumes:
+      - ./src:/app/src
+    networks:
+      - app-network
     working_dir: /app
-    command: ["npm", "run", "start:prod"]
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge

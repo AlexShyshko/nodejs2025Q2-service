@@ -9,16 +9,18 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { randomUUID } from 'crypto';
 import { db } from '../data-base/data-base';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 class UsersService {
   private users: Record<string, User>;
 
-  constructor() {
+  constructor(private readonly prisma: PrismaService) {
     this.users = db.users;
   }
 
   findAll(): Omit<User, 'password'>[] {
+    console.log('FIND ALL USERS');
     return Object.values(this.users).map((user) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...rest } = user;
