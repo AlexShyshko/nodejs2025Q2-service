@@ -8,10 +8,22 @@ class PrismaService
 {
   async onModuleInit() {
     await this.$connect();
+
+    // this.user.deleteMany();
+    // this.artist.deleteMany();
+    // this.album.deleteMany();
+    // this.track.deleteMany();
+    // this.favorite.deleteMany();
   }
 
   async onModuleDestroy() {
     await this.$disconnect();
+
+    // this.user.deleteMany();
+    // this.artist.deleteMany();
+    // this.album.deleteMany();
+    // this.track.deleteMany();
+    // this.favorite.deleteMany();
   }
 }
 

@@ -20,7 +20,6 @@
 #### To make migration:
 - Temporarily update .env for local DB - `DATABASE_URL="postgresql://kuroluboff:qwerty@localhost:3999/home-library?schema=public"`
 - Start the database locally via Docker Compose - `docker-compose up -d db`
-- Reset prisma - `npx prisma migrate reset`
 - Run the migration locally - `npx prisma migrate dev`
 - Generate prisma `npm run prisma:generate`
 - Revert .env - `DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_DOCKER_COMPOSE_SERVICE_NAME}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public"`

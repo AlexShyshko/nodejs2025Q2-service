@@ -16,43 +16,38 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 class UsersController {
-  private readonly usersService: UsersService;
-
-  constructor(usersService: UsersService) {
-    this.usersService = usersService;
-  }
-
+  constructor(private readonly usersService: UsersService) {}
   @Get()
-  findAll() {
-    const result = this.usersService.findAll();
+  async findAll() {
+    const result = await this.usersService.findAll();
     return result;
   }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    const result = this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const result = await this.usersService.create(createUserDto);
     return result;
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const result = this.usersService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const result = await this.usersService.findOne(id);
     return result;
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    const result = this.usersService.update(id, updateUserDto);
+    const result = await this.usersService.update(id, updateUserDto);
     return result;
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    this.usersService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.usersService.remove(id);
   }
 }
 
