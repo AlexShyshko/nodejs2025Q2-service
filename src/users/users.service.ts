@@ -21,7 +21,7 @@ class UsersService {
 
   findAll(): Omit<User, 'password'>[] {
     //this.prisma.client.user.findMany();
-    console.log('FIND ALL USERS');
+    console.log('FIN ALL USERS');
     console.log('ONE MORE - FIND ALL USERS');
     return Object.values(this.users).map((user) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
