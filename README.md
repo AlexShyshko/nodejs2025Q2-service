@@ -8,6 +8,7 @@
 - Generate prisma `npm run prisma:generate`
 - Build images and run containers `docker-compose up -d --build`
 - Wait for `Nest application successfully started` message in container logs (can take few minutes)
+- Login docker to be able to scan vulnerabilities `docker login`
 #### The application should pass these tests:
 - `npm run test`
     - `npx jest test/users.e2e.spec.ts --verbose`
@@ -16,6 +17,8 @@
     - `npx jest test/tracks.e2e.spec.ts --verbose`
     - `npx jest test/favorites.e2e.spec.ts --verbose`
 #### The application supports these predefined scripts:
+- `npm run scan:docker-db` - database vulnerabilities scanning.
+- `npm run scan:docker-prod` - API vulnerabilities scanning.
 - `docker system prune -a` - stops and cleans all containers and images.
 - `docker ps` - list of all active containers.
 - `docker system df` - shows how much space is used.
