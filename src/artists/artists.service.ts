@@ -1,41 +1,36 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Favorites, Artist, Album, Track } from '../types-and-interfaces';
+import { Artist } from '@prisma/client';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { randomUUID } from 'crypto';
-import { db } from '../data-base/data-base';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 class ArtistsService {
-  private favorites: Favorites;
-  private artists: Record<string, Artist>;
-  private albums: Record<string, Album>;
-  private tracks: Record<string, Track>;
+  constructor(private readonly prisma: PrismaService) {}
 
-  constructor() {
-    this.favorites = db.favorites;
-    this.artists = db.artists;
-    this.albums = db.albums;
-    this.tracks = db.tracks;
+  async findAll(): Promise<Artist[]> {
+    const artists = await this.prisma.artist.findMany();
+    return artists;
   }
 
-  findAll() {
-    return Object.values(this.artists);
-  }
-
-  create(createArtistDto: CreateArtistDto) {
+  async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     const artist: Artist = {
       id: randomUUID(),
       ...createArtistDto,
     };
 
-    this.artists[artist.id] = artist;
+    const newArtist = await this.prisma.artist.create({
+      data: artist,
+    });
 
-    return artist;
+    return newArtist;
   }
 
-  findOne(id: string) {
-    const artist = this.artists[id];
+  async findOne(id: string): Promise<Artist> {
+    const artist = await this.prisma.artist.findUnique({
+      where: { id },
+    });
 
     if (!artist) {
       throw new NotFoundException('Artist not found');
@@ -44,36 +39,23 @@ class ArtistsService {
     return artist;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    const artist = this.findOne(id);
+  async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const artist = await this.findOne(id);
 
-    artist.name = updateArtistDto.name;
-    artist.grammy = updateArtistDto.grammy;
+    const updatedArtist = await this.prisma.artist.update({
+      data: updateArtistDto,
+      where: { id },
+    });
 
-    return artist;
+    return updatedArtist;
   }
 
-  remove(id: string) {
+  async remove(id: string): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const artist = this.findOne(id);
+    const artist = await this.findOne(id);
 
-    delete this.artists[id];
-
-    this.favorites.artists = this.favorites.artists.filter((artistId) => {
-      return artistId !== id;
-    });
-
-    Object.values(this.albums).forEach((album) => {
-      if (album.artistId === id) {
-        album.artistId = null;
-      }
-    });
-
-    Object.values(this.tracks).forEach((track) => {
-      if (track.artistId === id) {
-        track.artistId = null;
-      }
-    });
+    await this.prisma.artist.delete({ where: { id } });
   }
 }
 

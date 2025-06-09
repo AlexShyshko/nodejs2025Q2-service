@@ -16,39 +16,39 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 
 @Controller('artist')
 class ArtistsController {
-  private readonly artistsService: ArtistsService;
-
-  constructor(artistsService: ArtistsService) {
-    this.artistsService = artistsService;
-  }
+  constructor(private readonly artistsService: ArtistsService) {}
 
   @Get()
-  findAll() {
-    return this.artistsService.findAll();
+  async findAll() {
+    const result = await this.artistsService.findAll();
+    return result;
   }
 
   @Post()
-  create(@Body() createArtistDto: CreateArtistDto) {
-    return this.artistsService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    const result = await this.artistsService.create(createArtistDto);
+    return result;
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.artistsService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const result = await this.artistsService.findOne(id);
+    return result;
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    return this.artistsService.update(id, updateArtistDto);
+    const result = await this.artistsService.update(id, updateArtistDto);
+    return result;
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    this.artistsService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.artistsService.remove(id);
   }
 }
 

@@ -7,7 +7,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_DOCKER_COMPOSE_SERVICE_NAME=${POSTGRES_DOCKER_COMPOSE_SERVICE_NAME}
-    image: alexshyshko_task-2-image_${POSTGRES_DOCKER_COMPOSE_SERVICE_NAME}
+    image: ${DOCKER_HUB_PATH}:${POSTGRES_DOCKER_COMPOSE_SERVICE_NAME}
     build:
       context: .
       dockerfile: db.Dockerfile
@@ -17,6 +17,7 @@ services:
     restart: unless-stopped
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - pglogs:/var/log/postgresql
     networks:
       - backend
     command: ["postgres", "-p", "${POSTGRES_PORT}"]
@@ -30,12 +31,12 @@ services:
       - DB_USERNAME=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
       - DB_DATABASE=${POSTGRES_DB}
-    image: alexshyshko_task-2-image_prod
+    image: ${DOCKER_HUB_PATH}:${API_DOCKER_COMPOSE_SERVICE_NAME}
     build:
       context: .
       dockerfile: prod.Dockerfile
-      target: prod
-    container_name: alexshyshko_task-2-container_prod
+      target: ${API_DOCKER_COMPOSE_SERVICE_NAME}
+    container_name: alexshyshko_task-2-container_${API_DOCKER_COMPOSE_SERVICE_NAME}
     ports:
       - "${PORT}:${PORT}"
     restart: unless-stopped
@@ -51,6 +52,7 @@ services:
 
 volumes:
   pgdata:
+  pglogs:
 
 networks:
   backend:

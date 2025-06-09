@@ -1,65 +1,61 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Favorites, Track } from '../types-and-interfaces';
+import { Track } from '@prisma/client';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { randomUUID } from 'crypto';
-import { db } from '../data-base/data-base';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 class TracksService {
-  private favorites: Favorites;
-  private tracks: Record<string, Track>;
+  constructor(private readonly prisma: PrismaService) {}
 
-  constructor() {
-    this.favorites = db.favorites;
-    this.tracks = db.tracks;
+  async findAll(): Promise<Track[]> {
+    const tracks = await this.prisma.track.findMany();
+    return tracks;
   }
 
-  findAll() {
-    return Object.values(this.tracks);
-  }
-
-  create(createTrackDto: CreateTrackDto) {
+  async create(createTrackDto: CreateTrackDto): Promise<Track> {
     const track: Track = {
       id: randomUUID(),
       ...createTrackDto,
     };
 
-    this.tracks[track.id] = track;
+    const newTrack = await this.prisma.track.create({
+      data: track,
+    });
 
-    return track;
+    return newTrack;
   }
 
-  findOne(id: string) {
-    const track = this.tracks[id];
+  async findOne(id: string): Promise<Track> {
+    const track = await this.prisma.track.findUnique({
+      where: { id },
+    });
 
     if (!track) {
-      throw new NotFoundException('Album not found');
+      throw new NotFoundException('Track not found');
     }
 
     return track;
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto) {
-    const track = this.findOne(id);
+  async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const track = await this.findOne(id);
 
-    track.name = updateTrackDto.name;
-    track.artistId = updateTrackDto.artistId;
-    track.albumId = updateTrackDto.albumId;
-    track.duration = updateTrackDto.duration;
+    const updatedTrack = await this.prisma.track.update({
+      data: updateTrackDto,
+      where: { id },
+    });
 
-    return track;
+    return updatedTrack;
   }
 
-  remove(id: string) {
+  async remove(id: string): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const track = this.findOne(id);
+    const track = await this.findOne(id);
 
-    delete this.tracks[id];
-
-    this.favorites.tracks = this.favorites.tracks.filter((trackId) => {
-      return trackId !== id;
-    });
+    await this.prisma.track.delete({ where: { id } });
   }
 }
 

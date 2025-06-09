@@ -1,39 +1,36 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Favorites, Album, Track } from '../types-and-interfaces';
+import { Album } from '@prisma/client';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { randomUUID } from 'crypto';
-import { db } from '../data-base/data-base';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 class AlbumsService {
-  private favorites: Favorites;
-  private albums: Record<string, Album>;
-  private tracks: Record<string, Track>;
+  constructor(private readonly prisma: PrismaService) {}
 
-  constructor() {
-    this.favorites = db.favorites;
-    this.albums = db.albums;
-    this.tracks = db.tracks;
+  async findAll(): Promise<Album[]> {
+    const albums = await this.prisma.album.findMany();
+    return albums;
   }
 
-  findAll() {
-    return Object.values(this.albums);
-  }
-
-  create(createAlbumDto: CreateAlbumDto) {
+  async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
     const album: Album = {
       id: randomUUID(),
       ...createAlbumDto,
     };
 
-    this.albums[album.id] = album;
+    const newAlbum = await this.prisma.album.create({
+      data: album,
+    });
 
-    return album;
+    return newAlbum;
   }
 
-  findOne(id: string) {
-    const album = this.albums[id];
+  async findOne(id: string): Promise<Album> {
+    const album = await this.prisma.album.findUnique({
+      where: { id },
+    });
 
     if (!album) {
       throw new NotFoundException('Album not found');
@@ -42,31 +39,23 @@ class AlbumsService {
     return album;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const album = this.findOne(id);
+  async update(id: string, updateAlbumDto: UpdateAlbumDto): Promise<Album> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const album = await this.findOne(id);
 
-    album.name = updateAlbumDto.name;
-    album.year = updateAlbumDto.year;
-    album.artistId = updateAlbumDto.artistId;
+    const updatedAlbum = await this.prisma.album.update({
+      data: updateAlbumDto,
+      where: { id },
+    });
 
-    return album;
+    return updatedAlbum;
   }
 
-  remove(id: string) {
+  async remove(id: string): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const album = this.findOne(id);
+    const album = await this.findOne(id);
 
-    delete this.albums[id];
-
-    this.favorites.albums = this.favorites.albums.filter((albumId) => {
-      return albumId !== id;
-    });
-
-    Object.values(this.tracks).forEach((track) => {
-      if (track.albumId === id) {
-        track.albumId = null;
-      }
-    });
+    await this.prisma.album.delete({ where: { id } });
   }
 }
 

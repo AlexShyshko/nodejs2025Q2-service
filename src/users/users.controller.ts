@@ -17,6 +17,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @Controller('user')
 class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
   @Get()
   async findAll() {
     const result = await this.usersService.findAll();

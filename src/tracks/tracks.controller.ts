@@ -16,39 +16,39 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 
 @Controller('track')
 class TracksController {
-  private readonly tracksService: TracksService;
-
-  constructor(tracksService: TracksService) {
-    this.tracksService = tracksService;
-  }
+  constructor(private readonly tracksService: TracksService) {}
 
   @Get()
-  findAll() {
-    return this.tracksService.findAll();
+  async findAll() {
+    const result = await this.tracksService.findAll();
+    return result;
   }
 
   @Post()
-  create(@Body() createTrackDto: CreateTrackDto) {
-    return this.tracksService.create(createTrackDto);
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    const result = await this.tracksService.create(createTrackDto);
+    return result;
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.tracksService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const result = await this.tracksService.findOne(id);
+    return result;
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
-    return this.tracksService.update(id, updateTrackDto);
+    const result = await this.tracksService.update(id, updateTrackDto);
+    return result;
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.tracksService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    await this.tracksService.remove(id);
   }
 }
 
