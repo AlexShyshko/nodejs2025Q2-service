@@ -4,7 +4,7 @@
 - Clone the repository `git clone https://github.com/AlexShyshko/nodejs2025Q2-service.git`
 - Enter the repository `cd nodejs2025Q2-service`
 - Choose the correct branch `git checkout part-2`
-- Install dependecies `npm install`
+- Install dependencies `npm install`
 - Generate prisma `npm run prisma:generate`
 - Build images and run containers `docker-compose up -d --build`
 - Wait for `Nest application successfully started` message in container logs (can take few minutes)
