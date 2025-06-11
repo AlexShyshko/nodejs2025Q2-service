@@ -113,52 +113,15 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
-security: []
-#   - bearerAuth: []
+security:
+  - bearerAuth: []
 
 paths:
-  /login:
+  /auth/signup:
     post:
       tags:
-        - Login
+        - Auth
       security: []
-      summary: Login
-      description: Logins a user and returns a JWT-token
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              title: example
-              properties:
-                login:
-                  type: string
-                  description: Username
-                password:
-                  type: string
-                  description: Password
-              required:
-                - user
-                - login
-      responses:
-        200:
-          description: Successful login.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                description: JWT Token
-        403:
-          description: Incorrect login or password
-  /signup:
-    post:
-      tags:
-        - Signup
-      security: [ ]
       summary: Signup
       description: Signup a user
       requestBody:
@@ -183,12 +146,90 @@ paths:
                 - login
                 - password
       responses:
-        204:
-          description: Successful signup
+        201:
+          description: DTO is valid
         400:
-          description: Bad request
+          description: DTO is invalid
         409:
           description: Conflict. Login already exists
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      security: []
+      summary: Login
+      description: Logins a user and returns a JWT-token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                login:
+                  type: string
+                  description: Username
+                password:
+                  type: string
+                  description: Password
+              required:
+                - user
+                - login
+      responses:
+        200:
+          description: DTO is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                description: JWT Token
+        400:
+          description: DTO is invalid
+        403:
+          description: Incorrect login or password
+  /auth/refresh:
+    post:
+      tags:
+        - Refresh
+      security: []
+      summary: Refresh
+      description: Refreshes a JWT-token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                refreshToken:
+                  type: string
+                  minLength: 3
+                  maxLength: 255
+                  description: Refresh token
+              required:
+                - refreshToken
+      responses:
+        200:
+          description: DTO is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                description: JWT Tokens
+        401:
+          description: DTO is invalid
+        403:
+          description: Authentication failed (Refresh token is invalid or expired)
   /user:
     get:
       tags:
