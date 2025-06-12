@@ -9,6 +9,18 @@ servers:
 
 components:
   schemas:
+    Token:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token
+        refreshToken:
+          type: string
+          description: JWT refresh token
+      required:
+        - accessToken
+        - refreshToken
     User:
       type: object
       properties:
@@ -113,8 +125,8 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
-# security:
-#   - bearerAuth: []
+security:
+  - bearerAuth: []
 
 paths:
   /auth/signup:
@@ -147,11 +159,13 @@ paths:
                 - password
       responses:
         201:
-          description: DTO is valid
+          description: The user has been created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         400:
-          description: DTO is invalid
-        409:
-          description: Conflict. Login already exists
+          description: Bad request. body does not contain required fields
   /auth/login:
     post:
       tags:
@@ -178,23 +192,20 @@ paths:
                 - login
       responses:
         200:
-          description: DTO is valid
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                description: JWT Token
+                $ref: '#/components/schemas/Token'
         400:
-          description: DTO is invalid
+          description: Bad request. body does not contain required fields
         403:
           description: Incorrect login or password
   /auth/refresh:
     post:
       tags:
         - Auth
+      security: []
       summary: Refresh
       description: Refreshes a JWT-token
       requestBody:
@@ -214,21 +225,15 @@ paths:
                 - refreshToken
       responses:
         200:
-          description: DTO is valid
+          description: Successful operation
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  accessToken:
-                    type: string
-                  refreshToken:
-                    type: string
-                description: JWT Tokens
+                $ref: '#/components/schemas/Token'
         401:
-          description: DTO is invalid
+          description: Access or refresh token is missing or invalid
         403:
-          description: Authentication failed (Refresh token is invalid or expired)
+          description: Refresh token is invalid or expired
   /user:
     get:
       tags:

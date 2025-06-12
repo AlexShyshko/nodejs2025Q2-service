@@ -56,6 +56,13 @@ interface FavoritesResponse {
 interface RefreshTokenDto {
   refreshToken: string;
 }
+interface AllTokensDto extends RefreshTokenDto {
+  accessToken: string;
+}
+interface TokenPayloadDto {
+  userId: string;
+  login: string;
+}
 export {
   DB,
   User,
@@ -73,4 +80,6 @@ export {
   Favorites,
   FavoritesResponse,
   RefreshTokenDto,
+  AllTokensDto,
+  TokenPayloadDto,
 };

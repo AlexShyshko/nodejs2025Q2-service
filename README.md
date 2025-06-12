@@ -7,15 +7,13 @@
 - Install dependencies `npm install`
 - Generate prisma `npm run prisma:generate`
 - Build images and run containers `docker-compose up -d --build`
-- Wait for `Nest application successfully started` message in container logs (can take few minutes)
+- Wait for `Nest application successfully started` and `Swagger is available` messages in container logs (can take few minutes)
 - Login docker to be able to scan vulnerabilities `docker login`
 #### The application should pass these tests:
-- `npm run test`
-    - `npx jest test/users.e2e.spec.ts --verbose`
-    - `npx jest test/artists.e2e.spec.ts --verbose`
-    - `npx jest test/albums.e2e.spec.ts --verbose`
-    - `npx jest test/tracks.e2e.spec.ts --verbose`
-    - `npx jest test/favorites.e2e.spec.ts --verbose`
+- `npm run test:auth`
+- `npm run test:refresh`
+#### Swagger is available:
+- [http://localhost:4000/doc](http://localhost:4000/doc)
 #### The application supports these predefined scripts:
 - `npm run scan:docker-db` - database vulnerabilities scanning.
 - `npm run scan:docker-prod` - API vulnerabilities scanning.

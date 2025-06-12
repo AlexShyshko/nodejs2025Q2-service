@@ -1,12 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-// import { User, Artist, Track, Album, Favorites, CreateUserDto, UpdatePasswordDto, FavoritesResponse } from './types-and-interfaces';
-// import { mc } from './message-colorizer/message-colorizer';
+import { Public } from './auth-guard/public.decorator';
 
 @Controller()
 class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @Public()
   @Get()
   getHello(): string {
     return this.appService.getHello();

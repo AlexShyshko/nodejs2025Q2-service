@@ -103,14 +103,24 @@ class UsersService {
     updateUserDto: UpdateUserDto,
   ): Promise<Omit<UserReturn, 'password'>> {
     const user = await this.#findOneWithPassword(id);
+    const isPasswordMatch = await bcrypt.compare(
+      updateUserDto.oldPassword,
+      user.password,
+    );
 
-    if (user.password !== updateUserDto.oldPassword) {
-      throw new ForbiddenException('Old password is incorrect');
+    if (!isPasswordMatch) {
+      throw new ForbiddenException(
+        `Old password ${updateUserDto.oldPassword} is incorrect`,
+      );
     }
 
     const now = new Date();
+    const hashedPassword = await bcrypt.hash(
+      updateUserDto.newPassword,
+      Number(process.env.CRYPT_SALT),
+    );
     const updateData: Omit<User, 'id' | 'login' | 'createdAt'> = {
-      password: updateUserDto.newPassword,
+      password: hashedPassword,
       version: user.version + 1,
       updatedAt: now,
     };
@@ -134,6 +144,16 @@ class UsersService {
     const user = await this.#findOneWithPassword(id);
 
     await this.prisma.user.delete({ where: { id } });
+  }
+
+  async getUserForLogin(login: string): Promise<User> {
+    const user = await this.prisma.user.findFirst({ where: { login } });
+
+    if (!user) {
+      throw new ForbiddenException(`No user with login ${login}`);
+    }
+
+    return user;
   }
 }
 
