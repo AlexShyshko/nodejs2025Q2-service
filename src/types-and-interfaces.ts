@@ -53,6 +53,9 @@ interface FavoritesResponse {
   albums: Album[];
   tracks: Track[];
 }
+interface RefreshTokenDto {
+  refreshToken: string;
+}
 export {
   DB,
   User,
@@ -69,4 +72,5 @@ export {
   UpdateAlbumDto,
   Favorites,
   FavoritesResponse,
+  RefreshTokenDto,
 };

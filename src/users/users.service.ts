@@ -10,6 +10,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 class UsersService {
@@ -41,9 +42,14 @@ class UsersService {
     }
 
     const now = new Date();
+    const hashedPassword = await bcrypt.hash(
+      createUserDto.password,
+      Number(process.env.CRYPT_SALT),
+    );
     const user: User = {
       id: randomUUID(),
-      ...createUserDto,
+      login: createUserDto.login,
+      password: hashedPassword,
       version: 1,
       createdAt: now,
       updatedAt: now,

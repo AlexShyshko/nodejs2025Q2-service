@@ -113,8 +113,8 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
-security:
-  - bearerAuth: []
+# security:
+#   - bearerAuth: []
 
 paths:
   /auth/signup:
@@ -194,8 +194,7 @@ paths:
   /auth/refresh:
     post:
       tags:
-        - Refresh
-      security: []
+        - Auth
       summary: Refresh
       description: Refreshes a JWT-token
       requestBody:
