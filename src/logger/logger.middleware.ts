@@ -6,7 +6,7 @@ import { STATUS_CODES } from 'http';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  constructor(private readonly logger: LoggerService) {}
+  constructor(private readonly loggerService: LoggerService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
     const { method, protocol, hostname, originalUrl, query, body } = req;
@@ -36,7 +36,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const requestUrl = `${protocol}://${hostname}:${process.env.PORT}${originalUrl}`;
       const message = `Request method: ${method}. Request URL: ${requestUrl}. Request query parameters: ${JSON.stringify(query)}. Request body: ${JSON.stringify(body)}. Response status code: ${statusCode}. Response status message: ${statusMessage}. Response Body: ${responseBody}`;
 
-      this.logger.log(message);
+      this.loggerService.log(message);
     });
 
     next();

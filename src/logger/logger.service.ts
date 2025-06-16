@@ -64,17 +64,18 @@ class LoggerService implements NestLoggerService {
 
     const timestamp = this.#getLogTimestamp();
     const parameters = this.#getLogParameters(optionalParams);
-    const logMessage = `${timestamp} - ${message}. Parameters: ${parameters}`;
-
-    console.log(`${mc.colorize(logMessage, color)}`);
-
+    let logMessage: string;
     let targetFileName: string;
 
     if (messageType === 'fatal' || messageType === 'error') {
       targetFileName = 'error';
+      logMessage = `${timestamp} - Error. ${message}. Parameters: ${parameters}`;
     } else {
       targetFileName = 'info';
+      logMessage = `${timestamp} - ${message}. Parameters: ${parameters}`;
     }
+
+    console.log(`${mc.colorize(logMessage, color)}`);
 
     const targetFile = `${targetFileName}.log`;
     const targetFilePath = join(this.#logDirectory, targetFile);

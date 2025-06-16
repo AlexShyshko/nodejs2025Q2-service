@@ -11,6 +11,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { LoggerModule } from './logger/logger.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
+import { APP_FILTER } from '@nestjs/core';
+import { LoggerFilter } from './logger/logger.filter';
 
 @Module({
   imports: [
@@ -27,7 +29,13 @@ import { LoggerMiddleware } from './logger/logger.middleware';
     LoggerModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: LoggerFilter,
+    },
+  ],
 })
 class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

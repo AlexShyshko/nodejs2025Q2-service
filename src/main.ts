@@ -24,6 +24,15 @@ async function bootstrap() {
 
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
+  process.on('uncaughtException', (e) => {
+    loggerService.error('Uncaught Exception', e);
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    loggerService.error('Unhandled Rejection', promise, 'reason:', reason);
+  });
+
   await app.listen(process.env.PORT);
 
   setTimeout(() => {
