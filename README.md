@@ -3,7 +3,7 @@
 - Install and run docker desktop [Mac](https://docs.docker.com/desktop/setup/install/mac-install/), [Windows](https://docs.docker.com/desktop/setup/install/windows-install/), [Linux](https://docs.docker.com/desktop/setup/install/linux/) 
 - Clone the repository `git clone https://github.com/AlexShyshko/nodejs2025Q2-service.git`
 - Enter the repository `cd nodejs2025Q2-service`
-- Choose the correct branch `git checkout part-2`
+- Choose the correct branch `git checkout part-3`
 - Install dependencies `npm install`
 - Generate prisma `npm run prisma:generate`
 - Build images and run containers `docker-compose up -d --build`
@@ -14,6 +14,9 @@
 - `npm run test:refresh`
 #### Swagger is available:
 - [http://localhost:4000/doc](http://localhost:4000/doc)
+#### Container logs are available:
+- `/usr/src/app/LOG_FILES/` - in the docker container
+- `<app root>/LOG_FILES/` - in the application repository
 #### The application supports these predefined scripts:
 - `npm run scan:docker-db` - database vulnerabilities scanning.
 - `npm run scan:docker-prod` - API vulnerabilities scanning.

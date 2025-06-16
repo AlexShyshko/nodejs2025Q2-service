@@ -8,6 +8,7 @@ import { join } from 'path';
 import { readFile } from 'fs/promises';
 import { SwaggerModule } from '@nestjs/swagger';
 import { mc } from './message-colorizer/message-colorizer';
+import { LoggerService } from './logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,9 @@ async function bootstrap() {
   const swaggerRoute = 'doc';
   SwaggerModule.setup(swaggerRoute, app, swaggerConfigParsed);
 
+  const loggerService = app.get(LoggerService);
+  app.useLogger(loggerService);
+
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   await app.listen(process.env.PORT);
@@ -25,7 +29,10 @@ async function bootstrap() {
   setTimeout(() => {
     const swaggerUrl = swaggerConfigParsed.servers[0].url;
     console.log(
-      `${mc.colorize('Swagger is available:', 'green')} ${mc.colorize(swaggerUrl + '/' + swaggerRoute, 'red')}`,
+      `${mc.colorize('Swagger is available:', 'green')} ${mc.colorize(swaggerUrl + '/' + swaggerRoute, 'yellow')}`,
+    );
+    console.log(
+      `${mc.colorize('Container logs are available:', 'green')} ${mc.colorize('/usr/src/app/LOG_FILES/', 'yellow')}`,
     );
   }, 1000);
 }
